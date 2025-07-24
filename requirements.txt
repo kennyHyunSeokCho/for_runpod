@@ -1,0 +1,10 @@
+runpod
+boto3
+numpy
+torch
+torchaudio
+librosa
+demucs
+ffmpeg-python
+requests
+python-dotenv
