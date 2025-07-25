@@ -4,7 +4,7 @@ import os
 
 def run_gpu_synthesis(input_data):
     """
-    test_model.py를 subprocess로 실행 (최대 3시간 대기)
+    workspace/test_model.py를 subprocess로 실행 (최대 3시간 대기)
     input_data에서 필요한 인자를 추출해 test_model.py에 넘깁니다.
     """
     try:
@@ -16,9 +16,10 @@ def run_gpu_synthesis(input_data):
         vocal_s3 = input_data.get('vocal_s3', '')
         inst_s3 = input_data.get('inst_s3', '')
 
-        # test_model.py 실행 인자 구성
+        # test_model.py의 실제 경로 지정
+        script_path = "workspace/test_model.py"
         args = [
-            "python3", "test_model.py",
+            "python3", script_path,
             "--user_id", user_id,
             "--artist", artist,
             "--title", title,
