@@ -6,6 +6,7 @@ def run_gpu_synthesis(input_data):
     """
     workspace/test_model.py를 subprocess로 실행 (최대 3시간 대기)
     input_data에서 필요한 인자를 추출해 test_model.py에 넘깁니다.
+    디버깅을 위해 작업 디렉토리, 파일 목록, 실행 명령어를 모두 출력합니다.
     """
     try:
         # input_data에서 인자 추출
@@ -15,6 +16,18 @@ def run_gpu_synthesis(input_data):
         user_vocal_s3 = input_data.get('user_vocal_s3', '')
         vocal_s3 = input_data.get('vocal_s3', '')
         inst_s3 = input_data.get('inst_s3', '')
+
+        # 디버깅: 현재 작업 디렉토리와 파일 목록 출력
+        print(f"[DEBUG] 현재 작업 디렉토리: {os.getcwd()}")
+        print("[DEBUG] 현재 디렉토리 파일 목록:")
+        for f in os.listdir('.'):
+            print(f"  - {f}")
+        print("[DEBUG] workspace 디렉토리 파일 목록:")
+        if os.path.exists('workspace'):
+            for f in os.listdir('workspace'):
+                print(f"  - workspace/{f}")
+        else:
+            print("  (workspace 디렉토리 없음)")
 
         # test_model.py의 실제 경로 지정
         script_path = "workspace/test_model.py"
@@ -27,13 +40,15 @@ def run_gpu_synthesis(input_data):
             "--vocal_s3", vocal_s3,
             "--inst_s3", inst_s3
         ]
-        print(f"실행 명령어: {' '.join(args)}")
+        print(f"[DEBUG] 실행 명령어: {' '.join(args)}")
         result = subprocess.run(
             args,
             capture_output=True,
             text=True,
             timeout=10800  # 최대 3시간(초)
         )
+        print(f"[DEBUG] subprocess stdout:\n{result.stdout}")
+        print(f"[DEBUG] subprocess stderr:\n{result.stderr}")
         return {
             "success": result.returncode == 0,
             "output": result.stdout,
@@ -48,6 +63,7 @@ def run_gpu_synthesis(input_data):
             "message": "test_model.py 실행 타임아웃"
         }
     except Exception as e:
+        print(f"[DEBUG] 예외 발생: {e}")
         return {
             "success": False,
             "output": "",
